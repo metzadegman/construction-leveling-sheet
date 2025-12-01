@@ -11,7 +11,54 @@
       .ok { background:#e8f5e9; padding:8px 12px; border-radius:8px; display:inline-block; }
     </style>
   </head>
-  <body>
+  <script type="module">
+  import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+  // TODO: Replace these with your real values from Supabase → Project Settings → API
+  const SUPABASE_URL = "https://YOUR_PROJECT_ID.supabase.co";
+  const SUPABASE_ANON_KEY = "YOUR_ANON_KEY";
+
+  const supabase = https://rplmmwtlusqrbuzdanxx.supabase.co
+  const el = (id) => document.getElementById(id);
+
+  async function uploadTakeoff() {
+    try {
+      const file = el("pdfFile").files[0];
+      if (!file) {
+        el("uploadStatus").innerHTML = "<span style='color:red'>Choose a PDF first.</span>";
+        return;
+      }
+
+      el("uploadStatus").innerText = "Uploading…";
+
+      const fileName = `${Date.now()}_${file.name.replace(/\s+/g, "_")}`;
+
+      const { error } = await supabase.storage
+        .from("takeoffs")
+        .upload(fileName, file, {
+          contentType: "application/pdf",
+        });
+
+      if (error) throw error;
+
+      el("uploadStatus").innerHTML = `<span style='color:green'>Uploaded: ${fileName}</span>`;
+    } catch (err) {
+      el("uploadStatus").innerHTML = "<span style='color:red'>Error uploading file.</span>";
+      console.error(err);
+    }
+  }
+
+  document.addEventListener("click", (e) => {
+    if (e.target.id === "uploadPdf") uploadTakeoff();
+  });
+</script>
+body><!-- Upload PDF Takeoff -->
+<div class="card" style="margin-bottom:12px">
+  <h2>Upload Takeoff (PDF)</h2>
+  <input type="file" id="pdfFile" accept="application/pdf" />
+  <button class="btn" id="uploadPdf">Upload PDF</button>
+  <div id="uploadStatus" class="muted" style="margin-top:8px"></div>
+</div>
     <div class="card">
       <h1>🚧 Construction Leveling Sheet — Starter Page</h1>
       <p>If you can see this page on your <strong>.vercel.app</strong> link, the site is live.</p>
